@@ -20,7 +20,7 @@ from caffe_converter import caffe2tnn
 from tf_converter import tf2tnn
 from utils import parse_path
 
-logging.basicConfig(level=logging.INFO, format="")
+logging.basicConfig(level=logging.DEBUG, format="")
 
 
 def main():

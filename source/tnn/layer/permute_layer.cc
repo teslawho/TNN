@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 
 #include "tnn/layer/base_layer.h"
 
@@ -36,23 +37,36 @@ Status PermuteLayer::InferOutputShape() {
     auto input_dims          = input_blob->GetBlobDesc().dims;
     std::vector<int>& orders = permute_param->orders;
 
+    if (orders.size() > input_dims.size()) {
+        LOGE("Permute param got wrong size. The order size should be less than or equal input dims size\n");
+        return Status(TNNERR_PARAM_ERR,
+                      "Permute param got wrong size. The order size should be less than or equal input dims size");
+    } else if (orders.size() < input_dims.size()) {
+        int diff     = input_dims.size() - orders.size();
+        int dim_size = input_dims.size();
+        for (int i = 1; i <= diff; ++i) {
+            if (input_dims[dim_size - i] != 1) {
+                LOGE("Permute param got wrong size. The order size should be less than or equal input dims size\n");
+                return Status(
+                    TNNERR_PARAM_ERR,
+                    "Permute param got wrong size. The order size should be less than or equal input dims size");
+            }
+        }
+    }
+
     for (int i = 0; i < input_dims.size(); ++i) {
         if (std::find(orders.begin(), orders.end(), i) == orders.end()) {
             orders.push_back(i);
         }
     }
-    if (permute_param->orders.size() != input_dims.size()) {
-        LOGE("Permute param got wrong size.\n");
-        return Status(TNNERR_PARAM_ERR, "Permute param got wrong size");
-    }
-
+    output_blob->GetBlobDesc().dims = input_dims;
     for (int i = 0; i < permute_param->orders.size(); ++i) {
         int order = permute_param->orders[i];
         if (order < 0 || order > input_dims.size() - 1) {
             LOGE("Permute param out of range.\n");
             return Status(TNNERR_PARAM_ERR, "Permute param out of range");
         }
-        output_blob->GetBlobDesc().dims.push_back(input_dims[order]);
+        output_blob->GetBlobDesc().dims[i] = input_dims[order];
     }
 
     return TNN_OK;
