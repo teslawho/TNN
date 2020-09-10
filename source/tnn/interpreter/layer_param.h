@@ -355,6 +355,10 @@ struct SqueezeLayerParam : public LayerParam {
     std::vector<int> axes;
 };
 
+struct MatMulLayerParam : public LayerParam {
+    int axis = 0;
+};
+
 }  // namespace TNN_NS
 
 #endif  // TNN_SOURCE_TNN_INTERPRETER_LAYER_PARAM_H

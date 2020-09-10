@@ -25,44 +25,50 @@ Status MatMulLayer::InferOutputDataType() {
 }
 
 Status MatMulLayer::InferOutputShape() {
+    // TODO MatMul only support case: A.dims.size equal to B.dims.size
+    // other case would be support in future
     ASSERT(input_blobs_.size() == 2);
+    auto param = dynamic_cast<MatMulLayerParam*>(param_);
     auto& output_dim = output_blobs_[0]->GetBlobDesc().dims;
-    auto dim_a   = input_blobs_[0]->GetBlobDesc().dims;
-    auto dim_b   = input_blobs_[1]->GetBlobDesc().dims;
-    int pad_axis = dim_a.size();
-    for (int i = dim_a.size() - 1; i >= 0; ++i) {
-        if (dim_a[i] == dim_b[i] && dim_a[i] == 1) {
-            pad_axis -= 1;
+    auto matrix_a_dim   = input_blobs_[0]->GetBlobDesc().dims;
+    auto matrix_b_dim   = input_blobs_[1]->GetBlobDesc().dims;
+    int pad_index = matrix_a_dim.size();
+    for (int i = matrix_a_dim.size() - 1; i >= 0; ++i) {
+        if (matrix_a_dim[i] == matrix_b_dim[i] && matrix_a_dim[i] == 1) {
+            pad_index -= 1;
         }
     }
 	// input0:[1, 32, 64, 1]
 	// input1:[1, 64, 96, 1]
 	//                    |
 	//                  pad _axis
-    switch (pad_axis) {
+    switch (pad_index) {
         case 4:{
-            ASSERT(dim_a[0] == dim_b[0]);
-            ASSERT(dim_a[1] == dim_b[1]);
-            ASSERT(dim_a[3] == dim_b[2]);
-            output_dim[0] = dim_a[0];
-            output_dim[1] = dim_a[1];
-            output_dim[2] = dim_a[2];
-            output_dim[3] = dim_b[3];
+            ASSERT(matrix_a_dim[0] == matrix_b_dim[0]);
+            ASSERT(matrix_a_dim[1] == matrix_b_dim[1]);
+            ASSERT(matrix_a_dim[3] == matrix_b_dim[2]);
+            param->axis   = 2;
+            output_dim[0] = matrix_a_dim[0];
+            output_dim[1] = matrix_a_dim[1];
+            output_dim[2] = matrix_a_dim[2];
+            output_dim[3] = matrix_b_dim[3];
             break;
         }
         case 3: {
-            ASSERT(dim_a[0] == dim_b[0]);
-            ASSERT(dim_a[2] == dim_b[1]);
-            output_dim[0] = dim_a[0];
-            output_dim[1] = dim_a[1];
-            output_dim[2] = dim_b[2];
+            ASSERT(matrix_a_dim[0] == matrix_b_dim[0]);
+            ASSERT(matrix_a_dim[2] == matrix_b_dim[1]);
+            param->axis   = 1;
+            output_dim[0] = matrix_a_dim[0];
+            output_dim[1] = matrix_a_dim[1];
+            output_dim[2] = matrix_b_dim[2];
             output_dim[3] = 1;
             break;
         }
         case 2: {
-            ASSERT(dim_a[1] == dim_b[0]);
-            output_dim[0] = dim_a[0];
-            output_dim[1] = dim_b[1];
+            ASSERT(matrix_a_dim[1] == matrix_b_dim[0]);
+            param->axis   = 0;
+            output_dim[0] = matrix_a_dim[0];
+            output_dim[1] = matrix_b_dim[1];
             output_dim[2] = 1;
             output_dim[3] = 1;
             break;

@@ -21,6 +21,8 @@ namespace TNN_NS {
 DECLARE_LAYER_INTERPRETER(MatMul, LAYER_MATMUL);
 static int num_output = 0;
 Status MatMulLayerInterpreter::InterpretProto(str_arr layer_cfg_arr, int start_index, LayerParam** param) {
+    auto matmul_param = new MatMulLayerParam();
+    *param            = matmul_param;
     return TNN_OK;
 }
 
