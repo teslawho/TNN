@@ -1,13 +1,14 @@
 name: android-arm-cpu
 on: [push, pull_request]
 jobs:
-  android-aarch64:
+  android:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: configure
+      uses: ravinderjangra/android-ndk-toolchain-setup@0.2
+          with:
+            api: '21'
       run: sudo apt-get install attr
-           sudo apt-get remove cmake
-           export ANDROID_NDK=$ANDROID_HOME/ndk-bundle/build/cmake/android.toolchain.cmake
     - name: build
       run: ./scripts/build_android.sh
