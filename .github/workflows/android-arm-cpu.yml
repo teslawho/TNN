@@ -6,9 +6,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: configure
-      key: android-sdk-preview-license-.+
-           android-sdk-license-.+
-           google-gdk-license-.+
       run: sudo apt-get remove cmake
            echo yes | sdkmanager "ndk-bundle"
            echo yes | sdkmanager "cmake;3.10.2.4988404"
