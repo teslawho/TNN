@@ -7,7 +7,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: configure
       run: sudo apt-get install attr
-           export ANDROID_NDK=$ANDROID_HOME/ndk-bundle
+    - name: export
+      run: export ANDROID_NDK=$ANDROID_HOME/ndk-bundle
            export ANDROID_SDK=$ANDROID_HOME/sdk
     - name: build
       run: ./scripts/build_android.sh
