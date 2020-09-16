@@ -6,9 +6,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: configure
-      uses: ravinderjangra/android-ndk-toolchain-setup@0.2
+      run: sudo apt-get install attr
+    - name: specify NDK
+          uses: ravinderjangra/android-ndk-toolchain-setup@0.2
           with:
             api: '21'
-      run: sudo apt-get install attr
+            arch: 'x86'
+            install-location: 'toolchains'
+            force: true
     - name: build
       run: ./scripts/build_android.sh
