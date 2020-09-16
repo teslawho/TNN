@@ -8,7 +8,6 @@ jobs:
     - name: configure
       run: sudo apt-get install attr
            sudo apt-get remove cmake
-      run: 
            export ANDROID_NDK=$ANDROID_HOME/ndk-bundle/build/cmake/android.toolchain.cmake
     - name: build
       run: ./scripts/build_android.sh
