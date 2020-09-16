@@ -10,6 +10,6 @@ jobs:
     - name: export
       run: export ANDROID_NDK=$ANDROID_HOME/ndk-bundle
     - name: test
-      run: cd $ANDROID_HOME && ls && pwd
+      run: cd $ANDROID_HOME/ndk-bundle && ls && pwd
     - name: build
       run: ./scripts/build_android.sh
