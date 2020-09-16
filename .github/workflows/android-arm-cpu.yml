@@ -6,8 +6,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: configure
-      run: sudo apt-get remove cmake
-           export ANDROID_NDK=$ANDROID_HOME/ndk-bundle
-           export PATH=/usr/local/android-sdk/cmake/3.10.2.4988404/bin/:$PATH
+      run: sudo apt-get install attr
+           sudo apt-get remove cmake
+    run: 
+           export ANDROID_NDK=$ANDROID_HOME/ndk-bundle/build/cmake/android.toolchain.cmake
     - name: build
       run: ./scripts/build_android.sh
